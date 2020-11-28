@@ -2,7 +2,7 @@
 
 #include "barulandia.h"
 
-#define BUTTONS_XY 64
+#define BUTTONS_XY 42
 
 // spritesheet positions (*64)
 #define CROSS_X 0

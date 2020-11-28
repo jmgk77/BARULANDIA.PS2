@@ -155,8 +155,8 @@ SDL_Surface *create_help_screen(TTF_Font *font) {
   SDL_BlitSurface(t1, NULL, help_screen, &dstrect);
 
 #define ROW_SPACING (MARGIN_Y * 0.45)
-#define COLUMN_SPACING (BUTTONS_XY * 7.6)
-#define COLUMN_SPACING2 (BUTTONS_XY * 6)
+#define COLUMN_SPACING (BUTTONS_XY * 4.8)
+#define COLUMN_SPACING2 (BUTTONS_XY * 3.2)
 
   // move
   srcrect.x = L_X * BUTTONS_XY;
@@ -235,13 +235,14 @@ SDL_Surface *create_help_screen(TTF_Font *font) {
   return help_screen;
 }
 
-SDL_Surface *create_credit_screen(TTF_Font *font) {
+SDL_Surface *create_credit_screen(TTF_Font *f) {
   SDL_Surface *credit_screen = load_surface(DATA_PATH "FUNDO" GRAPH_EXT);
   SDL_Surface *buttons = load_surface(DATA_PATH "BUTTONS" GRAPH_EXT);
 
   SDL_Color fg = {255, 0, 0, SDL_ALPHA_OPAQUE};
+  TTF_Font *font = TTF_OpenFont(DATA_PATH "BRADBUNR.TTF", 24);
 
-  SDL_Surface *t1 = TTF_RenderUTF8_Blended(font, "CRÉDITOS", fg);
+  SDL_Surface *t1 = TTF_RenderUTF8_Blended(f, "CRÉDITOS", fg);
   SDL_Surface *t2 = TTF_RenderUTF8_Blended(
       font, "BARULÂNDIA FABIANA C RIECHEL GONZÁLEZ KLEIN", fg);
   SDL_Surface *t3 =
@@ -250,7 +251,8 @@ SDL_Surface *create_credit_screen(TTF_Font *font) {
       TTF_RenderUTF8_Blended(font, "PROGRAMAÇÃO JULIÁN M GONZÁLEZ KLEIN", fg);
   SDL_Surface *t5 = TTF_RenderUTF8_Blended(
       font, "BETATEST MARCELA RIECHEL GONZÁLEZ KLEIN", fg);
-  SDL_Surface *t9 = TTF_RenderUTF8_Blended(font, "VOLTAR", fg);
+  SDL_Surface *t9 = TTF_RenderUTF8_Blended(f, "VOLTAR", fg);
+  TTF_CloseFont(font);
 
   fill_rounded_box_b(
       credit_screen, MARGIN_X, MARGIN_Y, credit_screen->w - (MARGIN_X * 2),

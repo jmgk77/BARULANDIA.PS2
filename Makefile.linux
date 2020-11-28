@@ -1,5 +1,5 @@
 DIR = ./build
-TARGET  = $(DIR)/BARULANDIA.PS3.linux
+TARGET  = $(DIR)/BARULANDIA.PS2.linux
 INCLUDE = ./include
 SRCS    = $(wildcard ./source/*.cpp)
 FLAGS   = -o$(TARGET) -Wall -g -std=gnu++11 -lSDL -lSDL_image -lSDL_ttf -lstdc++ -lm -lpng -lmikmod

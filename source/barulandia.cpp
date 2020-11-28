@@ -59,7 +59,8 @@ int main(int argc, char **argv) {
   dbglogger_printf("SDL version %d.%d.%d\n", compiled.major, compiled.minor,
                    compiled.patch);
 
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO) < 0) {
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO |
+               SDL_INIT_TIMER) < 0) {
     dbglogger_printf("SDL_Init: %s", SDL_GetError());
     return -1;
   }
@@ -77,7 +78,7 @@ int main(int argc, char **argv) {
     return -1;
   }
   // Brady Bunch Remastered
-  font = TTF_OpenFont(DATA_PATH "BRADBUNR.TTF", 48);
+  font = TTF_OpenFont(DATA_PATH "BRADBUNR.TTF", 32);
   if (!font) {
     dbglogger_printf("TTF_OpenFont: %s\n", TTF_GetError());
     return -1;
@@ -106,7 +107,7 @@ int main(int argc, char **argv) {
 
   // init screen
   screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0,
-                            SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
+                            SDL_SWSURFACE | SDL_DOUBLEBUF /*| SDL_FULLSCREEN*/);
   if (screen == NULL) {
     dbglogger_printf("SDL_SetVideoMode: %s", SDL_GetError());
     return -1;
@@ -125,19 +126,19 @@ int main(int argc, char **argv) {
   if ((cursor.x > x1) && (cursor.y > y1) && (cursor.x < x2) && (cursor.y < y2))
 
 #define CLICK_AREA                                                             \
-  CURSOR_AREA(172, 17, 322, 147) { draw_new--; } /*prev draw*/                 \
-  CURSOR_AREA(955, 17, 1110, 147) {              /*next draw*/                 \
+  CURSOR_AREA(23, 32, 86, 86) { draw_new--; } /*prev draw*/                    \
+  CURSOR_AREA(536, 37, 596, 87) {             /*next draw*/                    \
     draw_new++;                                                                \
   }                                                                            \
-  CURSOR_AREA(172, 565, 322, 707) { /*refresh draw*/                           \
+  CURSOR_AREA(22, 138, 81, 188) { /*refresh draw*/                             \
     effect_play(SOUND_TRASH);                                                  \
     draw_refresh = true;                                                       \
   }                                                                            \
-  CURSOR_AREA(172, 408, 322, 538) { /*eraser*/                                 \
+  CURSOR_AREA(24, 227, 80, 278) { /*eraser*/                                   \
     color_new = SDL_MapRGBA(field->format, 255, 255, 255, SDL_ALPHA_OPAQUE);   \
   }                                                                            \
-  CURSOR_AREA(955, 408, 1110, 538) {} /*paint tool*/                           \
-  CURSOR_AREA(1140, 15, 1270, 705) {  /*color picker*/                         \
+  CURSOR_AREA(24, 321, 84, 370) {}  /*paint tool*/                             \
+  CURSOR_AREA(534, 116, 621, 458) { /*color picker*/                           \
     SDL_LockSurface(field);                                                    \
     Uint32 c = GetPixel32_nolock(field, cursor.x, cursor.y);                   \
     SDL_UnlockSurface(field);                                                  \
@@ -145,7 +146,7 @@ int main(int argc, char **argv) {
       color_new = c;                                                           \
     }                                                                          \
   }                                                                            \
-  CURSOR_AREA(353, 1, 927, 719) { /*paint*/                                    \
+  CURSOR_AREA(129, 1, 511, 479) { /*paint*/                                    \
     floodfill(field, cursor.x, cursor.y, color_current);                       \
     redraw = true;                                                             \
   }
@@ -923,7 +924,7 @@ int main(int argc, char **argv) {
       // change current color
       if (color_current != color_new) {
         color_current = color_new;
-        floodfill(field, 1000, 650, color_current);
+        floodfill(field, 50, 450, color_current);
         redraw = true;
       }
 

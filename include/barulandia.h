@@ -9,8 +9,8 @@
 
 #define MAX_STRING 2048
 
-#define DRAW_W 576
-#define DRAW_H 720
+#define DRAW_W 384
+#define DRAW_H 480
 
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
 
@@ -44,8 +44,8 @@
 #define DATA_PATH "../release/USRDIR/"
 #endif
 
-#define WIDTH 1280
-#define HEIGHT 720
+#define WIDTH 640
+#define HEIGHT 480
 
 #include "debug.h"
 #include "floodfill.h"

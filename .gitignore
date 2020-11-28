@@ -1,0 +1,13 @@
+*.dll
+*.elf
+*.exe
+*.pkg
+*.self
+*.txt
+*.user
+a.out
+build/
+.vs/*
+x64/*
+release/USRDIR/SAVEDATA/*
+!release/USRDIR/SAVEDATA/.gitkeep
