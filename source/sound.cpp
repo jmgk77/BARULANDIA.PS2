@@ -6,7 +6,7 @@ int do_effect_play(void *index) {
   dbglogger_printf("PLAYING: %s\n", buf);
 
   // mikmod
-  SAMPLE *wave = Sample_Load(buf);
+  SAMPLE *wave = Sample_LoadGeneric(f2mr(buf));
   if (!wave) {
     dbglogger_printf("Could not load: %s\n", MikMod_strerror(MikMod_errno));
     return 0;

@@ -5,8 +5,12 @@ SDL_Surface *screen = NULL;
 SDL_Joystick *joystick = NULL;
 TTF_Font *font = NULL;
 
+// assets
+extern unsigned char assets[];
+
 // cleanup
 void cleanup() {
+  romdisk_umount();
   sound_end();
   if (joystick) {
     SDL_JoystickClose(joystick);
@@ -73,12 +77,15 @@ int main(int argc, char **argv) {
     return -1;
   }
 
+  // romfs
+  romdisk_mount(&assets);
+
   if (TTF_Init() == -1) {
     dbglogger_printf("TTF_Init: %s\n", TTF_GetError());
     return -1;
   }
   // Brady Bunch Remastered
-  font = TTF_OpenFont(DATA_PATH "BRADBUNR.TTF", 32);
+  font = TTF_OpenFontRW(f2rw(DATA_PATH "BRADBUNR.TTF"), 0, 32);
   if (!font) {
     dbglogger_printf("TTF_OpenFont: %s\n", TTF_GetError());
     return -1;

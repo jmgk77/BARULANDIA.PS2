@@ -240,7 +240,7 @@ SDL_Surface *create_credit_screen(TTF_Font *f) {
   SDL_Surface *buttons = load_surface(DATA_PATH "BUTTONS" GRAPH_EXT);
 
   SDL_Color fg = {255, 0, 0, SDL_ALPHA_OPAQUE};
-  TTF_Font *font = TTF_OpenFont(DATA_PATH "BRADBUNR.TTF", 24);
+  TTF_Font *font = TTF_OpenFontRW(f2rw(DATA_PATH "BRADBUNR.TTF"), 0, 32);
 
   SDL_Surface *t1 = TTF_RenderUTF8_Blended(f, "CRÉDITOS", fg);
   SDL_Surface *t2 = TTF_RenderUTF8_Blended(

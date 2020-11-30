@@ -12,13 +12,6 @@
 #define DRAW_W 384
 #define DRAW_H 480
 
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-
-#if defined SKIP_INTRO || defined SKIP_STARTSCREEN || defined SKIP_MAIN
-#pragma GCC diagnostic ignored "-Wunused-variable"
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
-#endif
-
 #define MAX_DRAW 10
 
 #define JOYBUTTONS 16
@@ -38,23 +31,10 @@
 #include <sysutil/sysutil.h>
 #endif
 
-#ifdef PS3
-#define DATA_PATH "/dev_hdd0/game/SDL12BARU/USRDIR/"
-#else
-#define DATA_PATH "../release/USRDIR/"
-#endif
+#define DATA_PATH ""
 
 #define WIDTH 640
 #define HEIGHT 480
-
-#include "debug.h"
-#include "floodfill.h"
-#include "save.h"
-#include "savepng.h"
-#include "screen.h"
-#include "sdl_help.h"
-#include "sound.h"
-#include "video.h"
 
 #include <bitset>
 #include <cmath>
@@ -80,3 +60,14 @@ using namespace std;
 #define MAIN_MAIN 11
 #define MAIN_END 12
 #define FINISHED 13
+
+#include "debug.h"
+#include "floodfill.h"
+#include "romfs.h"
+#include "romfs_help.h"
+#include "save.h"
+#include "savepng.h"
+#include "screen.h"
+#include "sdl_help.h"
+#include "sound.h"
+#include "video.h"

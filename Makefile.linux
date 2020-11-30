@@ -4,8 +4,14 @@ INCLUDE = ./include
 SRCS    = $(wildcard ./source/*.cpp)
 FLAGS   = -o$(TARGET) -Wall -g -std=gnu++11 -lSDL -lSDL_image -lSDL_ttf -lstdc++ -lm -lpng -lmikmod
 
-$(TARGET): $(DIR) $(SRCS)
-	gcc $(SRCS) -I$(INCLUDE) $(FLAGS)
+$(TARGET): $(DIR) $(SRCS) $(DIR)/assets.cpp
+	gcc $(SRCS) $(DIR)/assets.cpp -I$(INCLUDE) $(FLAGS)
+
+$(DIR)/assets.cpp: $(DIR)/assets.bin
+	bin2c $(DIR)/assets.bin $(DIR)/assets.cpp assets
+
+$(DIR)/assets.bin: $(wildcard ./release/USRDIR/*)
+	genromfs -d ./release/USRDIR/ -v -V BARULANDIA -f $(DIR)/assets.bin
 
 $(DIR):
 	mkdir $(DIR)
