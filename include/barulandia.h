@@ -9,6 +9,11 @@
 
 #define MAX_STRING 2048
 
+#define DATA_PATH ""
+
+#define WIDTH 640
+#define HEIGHT 480
+
 #define DRAW_W 384
 #define DRAW_H 480
 
@@ -17,33 +22,6 @@
 #define JOYBUTTONS 16
 
 #define GRAPH_EXT ".PNG"
-
-#include <SDL/SDL.h>
-#include <SDL/SDL_image.h>
-#include <SDL/SDL_ttf.h>
-
-#ifdef PS3
-#include <dbglogger.h>
-#include <io/pad.h>
-#include <ppu-types.h>
-#include <sys/process.h>
-#include <sysutil/msg.h>
-#include <sysutil/sysutil.h>
-#endif
-
-#define DATA_PATH ""
-
-#define WIDTH 640
-#define HEIGHT 480
-
-#include <bitset>
-#include <cmath>
-#include <dirent.h>
-#include <list>
-#include <mikmod.h>
-#include <png.h>
-#include <queue>
-#include <time.h>
 
 using namespace std;
 
@@ -61,6 +39,26 @@ using namespace std;
 #define MAIN_END 12
 #define FINISHED 13
 
+#include <SDL/SDL.h>
+#include <SDL/SDL_events.h>
+#include <SDL/SDL_image.h>
+#include <SDL/SDL_thread.h>
+#include <SDL/SDL_ttf.h>
+
+#include <stdio.h>
+#include <string.h>
+
+#include <bitset>
+#include <cmath>
+#include <cstring>
+#include <dirent.h>
+#include <list>
+#include <mikmod.h>
+#include <png.h>
+#include <queue>
+#include <romfs.h>
+#include <time.h>
+
 #include "debug.h"
 #include "floodfill.h"
 #include "romfs.h"
@@ -71,3 +69,18 @@ using namespace std;
 #include "sdl_help.h"
 #include "sound.h"
 #include "video.h"
+
+#ifdef PS2
+#include <debug.h>
+#include <errno.h>
+#include <iopcontrol.h>
+#include <iopheap.h>
+#include <kernel.h>
+#include <libmc.h>
+#include <loadfile.h>
+#include <sbv_patches.h>
+#include <sifrpc.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <tamtypes.h>
+#endif

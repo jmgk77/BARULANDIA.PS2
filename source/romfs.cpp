@@ -1,8 +1,5 @@
 #include "romfs.h"
 
-// #include <stdio.h>
-// #include <string.h>
-
 /* gilm: */
 typedef unsigned int uint32;
 typedef unsigned char uint8;
@@ -92,7 +89,7 @@ int romdisk_find(const char *path, void **ptr, int *size) {
 
     if (offset == 0) {
       /* directory not found */
-      dbglogger_printf("ROMFS: directory not found\n");
+      // dbglogger_printf("ROMFS: directory not found\n");
       return 2;
     }
 
@@ -104,7 +101,7 @@ int romdisk_find(const char *path, void **ptr, int *size) {
 
   /* now look for the file */
   if (strlen(path) == 0) {
-    dbglogger_printf("ROMFS: empty file name\n");
+    // dbglogger_printf("ROMFS: empty file name\n");
     return 2;
   }
 
@@ -129,7 +126,7 @@ int romdisk_find(const char *path, void **ptr, int *size) {
   }
 
   if (offset == 0) {
-    dbglogger_printf("ROMFS: file not found\n");
+    // dbglogger_printf("ROMFS: file not found\n");
     return 2;
   }
 

@@ -1,5 +1,12 @@
 #include "debug.h"
 
+#include <SDL/SDL_ttf.h>
+#include <mikmod.h>
+
+#define MAX_STRING 2048
+
+#define dbglogger_printf printf
+
 void debug_keyboard(SDL_KeyboardEvent *key) {
 #ifdef DEBUG
   if (key->type == SDL_KEYUP)
@@ -50,6 +57,7 @@ void debug_keyboard(SDL_KeyboardEvent *key) {
   if (mod & KMOD_ALT)
     dbglogger_printf("ALT ");
   dbglogger_printf("\n");
+#endif
 }
 
 void debug_joystick(SDL_Joystick *joystick) {
@@ -60,26 +68,26 @@ void debug_joystick(SDL_Joystick *joystick) {
   //                  SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_RIGHTX),
   //                  SDL_JoystickGetAxis(joystick,
   //                  SDL_CONTROLLER_AXIS_RIGHTY));
-#define LOG_BTN(X)                                                             \
-  if (SDL_JoystickGetButton(joystick, X) == SDL_PRESSED)                       \
-  dbglogger_printf(#X "\n")
-  LOG_BTN(SDL_CONTROLLER_BUTTON_LEFT);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_DOWN);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_RIGHT);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_UP);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_START);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_R3);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_L3);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_SELECT);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_SQUARE);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_CROSS);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_CIRCLE);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_TRIANGLE);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_R1);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_L1);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_R2);
-  LOG_BTN(SDL_CONTROLLER_BUTTON_L2);
-#endif
+// #define LOG_BTN(X)                                                             \
+//   if (SDL_JoystickGetButton(joystick, X) == SDL_PRESSED)                       \
+//   dbglogger_printf(#X "\n")
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_LEFT);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_DOWN);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_RIGHT);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_UP);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_START);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_R3);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_L3);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_SELECT);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_SQUARE);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_CROSS);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_CIRCLE);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_TRIANGLE);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_R1);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_L1);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_R2);
+//   LOG_BTN(SDL_CONTROLLER_BUTTON_L2);
+// #endif
 #endif
 }
 
@@ -267,25 +275,25 @@ void debug_audio_spec(SDL_AudioSpec *a) {
 
 extern SDL_Surface *screen;
 
-void debug_screenshot() {
-  char buf[MAX_STRING];
-  time_t rawtime;
-  struct tm *t;
-  time(&rawtime);
-  t = gmtime(&rawtime);
-  snprintf(buf, MAX_STRING, "SCREENSHOT_%d_%02d_%02d_%02d_%02d_%02d%s",
-           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min,
-           t->tm_sec, GRAPH_EXT);
-  SDL_Surface *surface = SDL_CreateRGBSurface(
-      0, WIDTH, HEIGHT, screen->format->BitsPerPixel, screen->format->Rmask,
-      screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
-  SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 255, 255, 255));
-  SDL_BlitSurface(screen, NULL, surface, NULL);
+// void debug_screenshot() {
+//   char buf[MAX_STRING];
+//   time_t rawtime;
+//   struct tm *t;
+//   time(&rawtime);
+//   t = gmtime(&rawtime);
+//   snprintf(buf, MAX_STRING, "SCREENSHOT_%d_%02d_%02d_%02d_%02d_%02d%s",
+//            t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour,
+//            t->tm_min, t->tm_sec, GRAPH_EXT);
+//   SDL_Surface *surface = SDL_CreateRGBSurface(
+//       0, WIDTH, HEIGHT, screen->format->BitsPerPixel, screen->format->Rmask,
+//       screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+//   SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 255, 255,
+//   255)); SDL_BlitSurface(screen, NULL, surface, NULL);
 
-  SDL_SavePNG(surface, buf);
+//   SDL_SavePNG(surface, buf);
 
-  SDL_FreeSurface(surface);
-}
+//   SDL_FreeSurface(surface);
+// }
 #endif
 #endif
 

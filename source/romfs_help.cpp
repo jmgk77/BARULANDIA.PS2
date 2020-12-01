@@ -12,7 +12,9 @@ SDL_RWops *f2rw(char *src) {
   return rw;
 }
 
-// mikmod mmio.c parts
+/*========== mikmod mmio.c parts */
+
+static long _mm_iobase = 0, temp_iobase = 0;
 
 typedef struct MMEMREADER {
   MREADER core;
@@ -21,7 +23,7 @@ typedef struct MMEMREADER {
   long pos;
 } MMEMREADER;
 
-void _mm_delete_mem_reader(MREADER *reader) { MikMod_free(reader); }
+void _mm_delete_mem_reader(MREADER *reader) { free(reader); }
 
 static BOOL _mm_MemReader_Eof(MREADER *reader) {
   MMEMREADER *mr = (MMEMREADER *)reader;
@@ -90,7 +92,7 @@ static int _mm_MemReader_Seek(MREADER *reader, long offset, int whence) {
     mr->pos += offset;
     break;
   case SEEK_SET:
-    mr->pos = reader->iobase + offset;
+    mr->pos = _mm_iobase + offset;
     break;
   case SEEK_END:
     mr->pos = mr->len + offset;
@@ -98,8 +100,8 @@ static int _mm_MemReader_Seek(MREADER *reader, long offset, int whence) {
   default: /* invalid */
     return -1;
   }
-  if (mr->pos < reader->iobase) {
-    mr->pos = mr->core.iobase;
+  if (mr->pos < _mm_iobase) {
+    mr->pos = _mm_iobase;
     return -1;
   }
   if (mr->pos > mr->len) {
@@ -110,13 +112,14 @@ static int _mm_MemReader_Seek(MREADER *reader, long offset, int whence) {
 
 static long _mm_MemReader_Tell(MREADER *reader) {
   if (reader) {
-    return ((MMEMREADER *)reader)->pos - reader->iobase;
+    return ((MMEMREADER *)reader)->pos - _mm_iobase;
   }
   return 0;
 }
 
 MREADER *_mm_new_mem_reader(const void *buffer, long len) {
-  MMEMREADER *reader = (MMEMREADER *)MikMod_calloc(1, sizeof(MMEMREADER));
+  MMEMREADER *reader = (MMEMREADER *)malloc(sizeof(MMEMREADER));
+  memset(reader, 0, sizeof(MMEMREADER));
   if (reader) {
     reader->core.Eof = &_mm_MemReader_Eof;
     reader->core.Read = &_mm_MemReader_Read;

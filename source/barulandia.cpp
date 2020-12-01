@@ -21,7 +21,9 @@ void cleanup() {
     font = NULL;
   }
   TTF_Quit();
+#ifndef _EE
   IMG_Quit();
+#endif
   SDL_Quit();
   dbglogger_stop();
   return;
@@ -38,17 +40,23 @@ int main(int argc, char **argv) {
 #endif
   atexit(cleanup);
 
-#ifdef PS3
-  // XMB exit
-  sysUtilRegisterCallback(
-      SYSUTIL_EVENT_SLOT0,
-      [](uint64_t status, uint64_t param, void *userdata) {
-        if (status == SYSUTIL_EXIT_GAME) {
-          cleanup();
-          sysProcessExit(1);
-        }
-      },
-      NULL);
+#ifdef PS2
+  SifIopReset(NULL, 0); // clean previous loading of irx by apps like
+                        // ulaunchElf. Comment this line to get cout on ps2link
+
+  // change priority to make SDL audio thread run properly
+  int main_id = GetThreadId();
+  ChangeThreadPriority(main_id, 72);
+
+  // Initialize and connect to all SIF services on the IOP.
+  SifInitRpc(0);
+  SifInitIopHeap();
+  SifLoadFileInit();
+  // fioInit();
+
+  // Apply the SBV LMB patch to allow modules to be loaded from a buffer in EE
+  // RAM.
+  sbv_patch_enable_lmb();
 #endif
 
   /////////////////////////////////////////////////////////////////////////////
@@ -63,19 +71,21 @@ int main(int argc, char **argv) {
   dbglogger_printf("SDL version %d.%d.%d\n", compiled.major, compiled.minor,
                    compiled.patch);
 
-  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK | SDL_INIT_AUDIO |
-               SDL_INIT_TIMER) < 0) {
+  if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER |
+               SDL_INIT_JOYSTICK) < 0) {
     dbglogger_printf("SDL_Init: %s", SDL_GetError());
     return -1;
   }
 
   // init sdl_image
+#ifndef _EE
   int flags = IMG_INIT_JPG | IMG_INIT_PNG;
   int initted = IMG_Init(flags);
   if ((initted & flags) != flags) {
     dbglogger_printf("IMG_Init: %s\n", IMG_GetError());
     return -1;
   }
+#endif
 
   // romfs
   romdisk_mount(&assets);
@@ -90,7 +100,7 @@ int main(int argc, char **argv) {
     dbglogger_printf("TTF_OpenFont: %s\n", TTF_GetError());
     return -1;
   }
-  /*debug_font(font);*/
+  debug_font(font);
 
   // sdl sound init
   sound_init();
@@ -113,15 +123,21 @@ int main(int argc, char **argv) {
   joystick = SDL_JoystickOpen(0);
 
   // init screen
+#ifdef PS2
+
   screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0,
-                            SDL_SWSURFACE | SDL_DOUBLEBUF /*| SDL_FULLSCREEN*/);
+                            SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
+#else
+
+  screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_SWSURFACE | SDL_DOUBLEBUF);
+#endif
   if (screen == NULL) {
     dbglogger_printf("SDL_SetVideoMode: %s", SDL_GetError());
     return -1;
   }
 
   // print info
-  /*debug_video();*/
+  debug_video();
 
   /////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
@@ -231,7 +247,7 @@ int main(int argc, char **argv) {
     state[k] = j;                                                              \
   }
       case SDL_KEYDOWN:
-        /*debug_keyboard(&e.key);*/
+        debug_keyboard(&e.key);
         if (e.key.keysym.sym == SDLK_ESCAPE) {
           start_active = false;
         }
@@ -311,7 +327,7 @@ int main(int argc, char **argv) {
     // read joystick state
     if (joystick) {
       SDL_JoystickUpdate();
-      /*debug_joystick(joystick);*/
+      debug_joystick(joystick);
       for (int i = 0; i < JOYBUTTONS; ++i) {
         joystick_buttonstate[i] = SDL_JoystickGetButton(joystick, i);
       }

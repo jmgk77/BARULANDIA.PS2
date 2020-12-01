@@ -6,14 +6,12 @@
 #define DBG_PORT "18194"
 
 #ifdef DEBUG
-#ifndef PS3
 #define dbglogger_init_str(x)
 #define dbglogger_stop(x)
 #define dbglogger_printf printf
 #define dbglogger_printf printf
 #define dbglogger_screenshot_tmp(x) /*debug_screenshot()*/
 #define dbglogger_failsafe(x)
-#endif
 #else
 #define dbglogger_init_str(x)
 #define dbglogger_stop(x)
