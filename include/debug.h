@@ -23,7 +23,6 @@
 void debug_keyboard(SDL_KeyboardEvent *key);
 void debug_joystick(SDL_Joystick *joystick);
 void debug_video();
-void ret2psload();
 void debug_format(int tf);
 void debug_font(TTF_Font *font);
 void debug_audio();

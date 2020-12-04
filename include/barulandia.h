@@ -1,13 +1,13 @@
 #pragma once
 
-#define DEBUG 1
+//#define DEBUG 1
 
 //#define SKIP_INTRO
 //#define SKIP_STARTSCREEN
 //#define SKIP_GALLERY
 //#define SKIP_MAIN
 
-#define MAX_STRING 2048
+#define MAX_STRING 512
 
 #define DATA_PATH ""
 
@@ -44,6 +44,7 @@ using namespace std;
 #include <SDL/SDL_image.h>
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_ttf.h>
+#include <SDL/SDL_mixer.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -53,7 +54,6 @@ using namespace std;
 #include <cstring>
 #include <dirent.h>
 #include <list>
-#include <mikmod.h>
 #include <png.h>
 #include <queue>
 #include <romfs.h>

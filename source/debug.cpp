@@ -1,9 +1,9 @@
 #include "debug.h"
 
+#include "sdl_help.h"
 #include <SDL/SDL_ttf.h>
-#include <mikmod.h>
 
-#define MAX_STRING 2048
+#define MAX_STRING 512
 
 #define dbglogger_printf printf
 
@@ -62,32 +62,30 @@ void debug_keyboard(SDL_KeyboardEvent *key) {
 
 void debug_joystick(SDL_Joystick *joystick) {
 #ifdef DEBUG
-  // dbglogger_printf("LX %d LY %d RX %d RY %d\n",
-  //                  SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_LEFTX),
-  //                  SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_LEFTY),
-  //                  SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_RIGHTX),
-  //                  SDL_JoystickGetAxis(joystick,
-  //                  SDL_CONTROLLER_AXIS_RIGHTY));
-// #define LOG_BTN(X)                                                             \
-//   if (SDL_JoystickGetButton(joystick, X) == SDL_PRESSED)                       \
-//   dbglogger_printf(#X "\n")
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_LEFT);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_DOWN);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_RIGHT);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_UP);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_START);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_R3);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_L3);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_SELECT);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_SQUARE);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_CROSS);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_CIRCLE);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_TRIANGLE);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_R1);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_L1);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_R2);
-//   LOG_BTN(SDL_CONTROLLER_BUTTON_L2);
-// #endif
+  dbglogger_printf("LX %d LY %d RX %d RY %d\n",
+                   SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_LEFTX),
+                   SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_LEFTY),
+                   SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_RIGHTX),
+                   SDL_JoystickGetAxis(joystick, SDL_CONTROLLER_AXIS_RIGHTY));
+#define LOG_BTN(X)                                                             \
+  if (SDL_JoystickGetButton(joystick, X) == SDL_PRESSED)                       \
+  dbglogger_printf(#X "\n")
+  LOG_BTN(SDL_CONTROLLER_BUTTON_LEFT);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_DOWN);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_RIGHT);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_UP);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_START);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_R3);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_L3);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_SELECT);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_SQUARE);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_CROSS);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_CIRCLE);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_TRIANGLE);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_R1);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_L1);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_R2);
+  LOG_BTN(SDL_CONTROLLER_BUTTON_L2);
 #endif
 }
 
@@ -146,19 +144,8 @@ void debug_video() {
       "Rmask\t\t0x%x\nGmask\t\t0x%x\nBmask\t\t0x%x\nAmask\t\t0x%x\n",
       vinfo->vfmt->Rmask, vinfo->vfmt->Gmask, vinfo->vfmt->Bmask,
       vinfo->vfmt->Amask);
-#ifndef PS3
   dbglogger_printf("colorkey\t0x%x\nalpha\t\t0x%x\n", vinfo->vfmt->colorkey,
                    vinfo->vfmt->alpha);
-#endif
-#endif
-}
-
-void ret2psload() {
-#ifdef DEBUG
-#ifdef PS3
-  sysProcessExitSpawn2("/dev_hdd0/game/PSL145310/RELOAD.SELF", NULL, NULL, NULL,
-                       0, 1001, SYS_PROCESS_SPAWN_STACK_SIZE_1M);
-#endif
 #endif
 }
 
@@ -271,35 +258,70 @@ void debug_audio_spec(SDL_AudioSpec *a) {
 }
 
 #ifdef DEBUG
-#ifndef PS3
 
 extern SDL_Surface *screen;
 
-// void debug_screenshot() {
-//   char buf[MAX_STRING];
-//   time_t rawtime;
-//   struct tm *t;
-//   time(&rawtime);
-//   t = gmtime(&rawtime);
-//   snprintf(buf, MAX_STRING, "SCREENSHOT_%d_%02d_%02d_%02d_%02d_%02d%s",
-//            t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour,
-//            t->tm_min, t->tm_sec, GRAPH_EXT);
-//   SDL_Surface *surface = SDL_CreateRGBSurface(
-//       0, WIDTH, HEIGHT, screen->format->BitsPerPixel, screen->format->Rmask,
-//       screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
-//   SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 255, 255,
-//   255)); SDL_BlitSurface(screen, NULL, surface, NULL);
+void debug_screenshot() {
+  char buf[MAX_STRING];
+  time_t rawtime;
+  struct tm *t;
+  time(&rawtime);
+  t = gmtime(&rawtime);
+  snprintf(buf, MAX_STRING, "SCREENSHOT_%d_%02d_%02d_%02d_%02d_%02d%s",
+           t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour, t->tm_min,
+           t->tm_sec, GRAPH_EXT);
+  SDL_Surface *surface = SDL_CreateRGBSurface(
+      0, WIDTH, HEIGHT, screen->format->BitsPerPixel, screen->format->Rmask,
+      screen->format->Gmask, screen->format->Bmask, screen->format->Amask);
+  SDL_FillRect(surface, NULL, SDL_MapRGBA(surface->format, 255, 255, 255, 255));
+  SDL_BlitSurface(screen, NULL, surface, NULL);
 
-//   SDL_SavePNG(surface, buf);
+  SDL_SavePNG(surface, buf);
 
-//   SDL_FreeSurface(surface);
-// }
-#endif
+  SDL_FreeSurface(surface);
+}
 #endif
 
 void debug_audio() {
 #ifdef DEBUG
-  dbglogger_printf("Init %s\n", MikMod_InfoDriver());
-  dbglogger_printf("Loader %s\n", MikMod_InfoLoader());
+  // get and print the audio format in use
+  int numtimesopened, frequency, channels;
+  Uint16 format;
+  numtimesopened = Mix_QuerySpec(&frequency, &format, &channels);
+  if (numtimesopened == 0) {
+    dbglogger_printf("Mix_QuerySpec: %s\n", Mix_GetError());
+  } else {
+    char *format_str = "Unknown";
+    switch (format) {
+    case AUDIO_U8:
+      format_str = "U8";
+      break;
+    case AUDIO_S8:
+      format_str = "S8";
+      break;
+    case AUDIO_U16LSB:
+      format_str = "U16LSB";
+      break;
+    case AUDIO_S16LSB:
+      format_str = "S16LSB";
+      break;
+    case AUDIO_U16MSB:
+      format_str = "U16MSB";
+      break;
+    case AUDIO_S16MSB:
+      format_str = "S16MSB";
+      break;
+    }
+    dbglogger_printf(
+        "opened=%d times  frequency=%dHz  format=%s  channels=%d\n",
+        numtimesopened, frequency, format_str, channels);
+  }
+#ifndef PS2
+  int i, max = Mix_GetNumChunkDecoders();
+  dbglogger_printf("There are %d sample chunk deocoders available\n", max);
+  for (i = 0; i < max; ++i)
+    dbglogger_printf("Sample chunk decoder %d is for %s\n", i,
+                     Mix_GetChunkDecoder(i));
+#endif
 #endif
 }

@@ -1,25 +1,17 @@
-DIR = ./build
-# name
-EE_BIN = BARULANDIA.PS2.elf
-EE_OBJS= source/romfs.o \
-		source/savepng.o \
-		source/sdl_help.o \
-		source/video.o \
-		source/screen.o \
-		source/floodfill.o \
-		source/barulandia.o \
-		source/debug.o \
-		source/save.o \
-		source/sound.o \
-		source/romfs_help.o \
-		build/assets.o
+DIR      = ./build
 
-EE_INCS = -I$(PS2SDK)/ports/include -I./include -I$(PS2SDK)/ports/include/stlport
-EE_LDFLAGS = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib
-EE_LIBS =  -lSDL_image -lsdlmixer -lsdl -lz -lSDL_ttf -lstdc++ -lm -lpng -lmikmod \
-		   -ljpeg -ltiff -lfreetype -lSDL_gfx
+EE_BIN  = BARULANDIA.PS2.elf
+EE_SRCS = $(wildcard ./source/*.cpp)
+EE_OBJS = $(EE_SRCS:.cpp=.o)
+EE_OBJS += build/assets.o
 
-EE_CXXFLAGS += -DPS2 -w -DDEBUG
+EE_INCS     = -I$(PS2SDK)/ports/include -I./include -I$(PS2SDK)/ports/include/stlport
+EE_LDFLAGS  = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib
+EE_LIBS     = -lSDL_image -lsdlmixer -lsdl -lz -lSDL_ttf -lstdc++ -lm -lpng -lmikmod \
+			  -ljpeg -ltiff -lfreetype -lSDL_gfx
+
+EE_CXXFLAGS += -DPS2 -w -O3
+#EE_CXXFLAGS += -DDEBUG
 
 all: $(EE_BIN)
 

@@ -21,29 +21,29 @@ void cleanup() {
     font = NULL;
   }
   TTF_Quit();
-#ifndef _EE
+#ifndef PS2
   IMG_Quit();
 #endif
   SDL_Quit();
   dbglogger_stop();
+#ifdef PS2
+  SifExitRpc(); // This is to return to the PS2 menu, in the MC screen.
+#endif
   return;
 }
 
 // main
 int main(int argc, char **argv) {
   dbglogger_init_str("tcp:" DBG_IP ":" DBG_PORT);
-  dbglogger_printf("BARULANDIA for ps3 (c) jmgk 2020\n");
+  dbglogger_printf("BARULANDIA for ps2 (c) jmgk 2020\n");
 
-#ifdef DEBUG
-  dbglogger_failsafe("5555");
-  atexit(ret2psload);
-#endif
   atexit(cleanup);
 
 #ifdef PS2
+#ifndef DEBUG
   SifIopReset(NULL, 0); // clean previous loading of irx by apps like
                         // ulaunchElf. Comment this line to get cout on ps2link
-
+#endif
   // change priority to make SDL audio thread run properly
   int main_id = GetThreadId();
   ChangeThreadPriority(main_id, 72);
@@ -78,7 +78,7 @@ int main(int argc, char **argv) {
   }
 
   // init sdl_image
-#ifndef _EE
+#ifndef PS2
   int flags = IMG_INIT_JPG | IMG_INIT_PNG;
   int initted = IMG_Init(flags);
   if ((initted & flags) != flags) {
@@ -112,7 +112,7 @@ int main(int argc, char **argv) {
     joystick_oldbuttonstate[i] = joystick_buttonstate[i] = false;
   }
 
-#ifndef PS3
+#ifndef PS2
   // keyboard state
   bool state[SDLK_LAST];
   for (int i = 0; i < SDLK_LAST; i++)
@@ -122,15 +122,17 @@ int main(int argc, char **argv) {
   // init joystick
   joystick = SDL_JoystickOpen(0);
 
+  /*dbglogger_printf("------------------ %d ------------------\n",
+                   SDL_JoystickNumButtons(joystick));*/
+
   // init screen
 #ifdef PS2
-
   screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0,
                             SDL_SWSURFACE | SDL_DOUBLEBUF | SDL_FULLSCREEN);
 #else
-
   screen = SDL_SetVideoMode(WIDTH, HEIGHT, 0, SDL_SWSURFACE | SDL_DOUBLEBUF);
 #endif
+
   if (screen == NULL) {
     dbglogger_printf("SDL_SetVideoMode: %s", SDL_GetError());
     return -1;
@@ -240,7 +242,7 @@ int main(int argc, char **argv) {
         start_active = false;
         break;
 
-#ifndef PS3
+#ifndef PS2
 
 #define KSTATE(k, j)                                                           \
   if (e.key.keysym.sym == k) {                                                 \
@@ -299,7 +301,7 @@ int main(int argc, char **argv) {
       joystick_buttonstate[i] = false;
     }
 
-#ifndef PS3
+#ifndef PS2
 
 // convert keyboard state to joystick state
 #define KEYB_CONVERT(j, k)                                                     \
@@ -327,7 +329,6 @@ int main(int argc, char **argv) {
     // read joystick state
     if (joystick) {
       SDL_JoystickUpdate();
-      debug_joystick(joystick);
       for (int i = 0; i < JOYBUTTONS; ++i) {
         joystick_buttonstate[i] = SDL_JoystickGetButton(joystick, i);
       }

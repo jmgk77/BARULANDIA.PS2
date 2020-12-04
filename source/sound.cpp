@@ -1,25 +1,27 @@
 #include "sound.h"
 
+Mix_Chunk *chunk = 0;
+
 int do_effect_play(void *index) {
   char buf[128];
   snprintf(buf, 128, "%sSOUND%d.WAV", DATA_PATH, index);
-  dbglogger_printf("PLAYING: %s\n", buf);
+  dbglogger_printf("MIX->PLAYING: %s\n", buf);
 
-  // mikmod
-  SAMPLE *wave = Sample_LoadGeneric(f2mr(buf));
-  if (!wave) {
-    dbglogger_printf("Could not load: %s\n", MikMod_strerror(MikMod_errno));
+  Mix_HaltChannel(-1);
+  if (chunk) {
+    Mix_FreeChunk(chunk);
+  }
+  chunk = 0;
+
+  chunk = Mix_LoadWAV_RW(f2rw(buf), 0);
+  if (chunk == NULL) {
+    dbglogger_printf("MIX->Could not open %s: %s\n", buf, Mix_GetError());
     return 0;
   }
-
-  int id = Sample_Play(wave, 0, SFX_CRITICAL);
-  Voice_SetVolume(id, 256);
-  do {
-    MikMod_Update();
-    SDL_Delay(10);
-  } while (!Voice_Stopped(id));
-
-  Sample_Free(wave);
+  Mix_VolumeChunk(chunk, MIX_MAX_VOLUME);
+  if (Mix_PlayChannel(-1, chunk, 0) == -1) {
+    dbglogger_printf("MIX->Mix_PlayChannel: %s\n", Mix_GetError());
+  }
   return 0;
 }
 
@@ -27,32 +29,27 @@ void effect_play(int index) {
   SDL_Thread *thread = SDL_CreateThread(do_effect_play, (void *)index);
 
   if (thread == NULL) {
-    dbglogger_printf("SDL_CreateThread failed: %s\n", SDL_GetError());
+    dbglogger_printf("MIX->SDL_CreateThread failed: %s\n", SDL_GetError());
   }
 }
 
 void sound_init() {
-  dbglogger_printf("MikMod version %ld.%ld.%ld\n", LIBMIKMOD_VERSION_MAJOR,
-                   LIBMIKMOD_VERSION_MINOR, LIBMIKMOD_REVISION);
+  SDL_version compile_version;
+  SDL_MIXER_VERSION(&compile_version);
+  dbglogger_printf("MIX->MikMod version %ld.%ld.%ld\n", compile_version.major,
+                   compile_version.minor, compile_version.patch);
 
-  MikMod_InitThreads();
-
-  MikMod_RegisterAllDrivers();
-  MikMod_RegisterAllLoaders();
-
-  char s[] = "";
-  if (MikMod_Init(s)) {
-    dbglogger_printf("Could not initialize sound: %s",
-                     MikMod_strerror(MikMod_errno));
-    sound_end();
-    return;
+  // Mix_Init(0);
+  if (Mix_OpenAudio(44100, AUDIO_S16, 1, 4096) < 0) {
+    dbglogger_printf("MIX->Couldn't open audio: %s\n", SDL_GetError());
   }
-  MikMod_SetNumVoices(-1, 2);
-  MikMod_EnableOutput();
   debug_audio();
 }
 
 void sound_end() {
-  MikMod_DisableOutput();
-  MikMod_Exit();
+  if (chunk) {
+    Mix_FreeChunk(chunk);
+  }
+  Mix_CloseAudio();
+  // Mix_Quit();
 }
