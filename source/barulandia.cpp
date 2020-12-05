@@ -41,23 +41,22 @@ int main(int argc, char **argv) {
 
 #ifdef PS2
 #ifndef DEBUG
-  SifIopReset(NULL, 0); // clean previous loading of irx by apps like
-                        // ulaunchElf. Comment this line to get cout on ps2link
-#endif
-  // change priority to make SDL audio thread run properly
-  int main_id = GetThreadId();
-  ChangeThreadPriority(main_id, 72);
-
-  // Initialize and connect to all SIF services on the IOP.
   SifInitRpc(0);
-  SifInitIopHeap();
-  SifLoadFileInit();
-  // fioInit();
+  while (!SifIopReset("", 0)) {
+  };
+  while (!SifIopSync()) {
+  };
+#endif
 
-  // Apply the SBV LMB patch to allow modules to be loaded from a buffer in EE
-  // RAM.
+  // Initialize SIF services
+  SifInitRpc(0);
+  SifLoadFileInit();
+  SifInitIopHeap();
   sbv_patch_enable_lmb();
 #endif
+
+  // change priority to make SDL audio thread run properly
+  ChangeThreadPriority(GetThreadId(), 72);
 
   /////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
