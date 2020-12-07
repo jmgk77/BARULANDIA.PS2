@@ -7,6 +7,9 @@
 //#define SKIP_GALLERY
 //#define SKIP_MAIN
 
+// #define PRE_CACHE
+// #define PRE_CACHE_THREADS 2
+
 #define MAX_STRING 512
 
 #define DATA_PATH ""
@@ -61,6 +64,7 @@ using namespace std;
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <time.h>
+#include <unordered_map>
 
 #include "debug.h"
 #include "floodfill.h"

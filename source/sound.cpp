@@ -36,8 +36,9 @@ void effect_play(int index) {
 void sound_init() {
   SDL_version compile_version;
   SDL_MIXER_VERSION(&compile_version);
-  dbglogger_printf("MIX->MikMod version %ld.%ld.%ld\n", compile_version.major,
-                   compile_version.minor, compile_version.patch);
+  dbglogger_printf("MIX->SDL_mixer version %ld.%ld.%ld\n",
+                   compile_version.major, compile_version.minor,
+                   compile_version.patch);
 
   // Mix_Init(0);
   if (Mix_OpenAudio(44100, AUDIO_S16, 1, 4096) < 0) {

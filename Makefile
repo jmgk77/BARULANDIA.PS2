@@ -11,7 +11,7 @@ EE_LIBS     = -lSDL_image -lsdlmixer -lsdl -lSDL_ttf -lstdc++ -lm -lpng -lmikmod
 			  -ljpeg -ltiff -lfreetype -lSDL_gfx -lmc
 
 EE_CXXFLAGS += -DPS2 -w -O3
-EE_CXXFLAGS += -DDEBUG
+#EE_CXXFLAGS += -DDEBUG
 
 all: $(EE_BIN)
 

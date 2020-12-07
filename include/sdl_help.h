@@ -60,3 +60,5 @@ void PutPixel32_nolock(SDL_Surface *surface, int x, int y, Uint32 color);
 Uint32 GetPixel32_nolock(SDL_Surface *surface, int x, int y);
 SDL_Surface *ScaleSurface(SDL_Surface *Surface, Uint16 Width, Uint16 Height);
 void scale_show(SDL_Surface *destin, SDL_Surface *source, SDL_Rect *rect);
+void scale_free();
+void cache_scale(SDL_Surface * img);

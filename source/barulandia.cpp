@@ -217,6 +217,7 @@ int main(int argc, char **argv) {
   list<draws>::iterator drawing_ptr;
   SDL_Surface *buttons, *t_move, *t_continue, *t_delete, *t_cancel, *sfundo;
   SDL_Surface *draw_continue = NULL;
+  bool caching = false;
 
   // main vars
   SDL_Rect cursor;
@@ -529,8 +530,13 @@ int main(int argc, char **argv) {
             dbglogger_printf("OK\n");
             i.name = new char[MAX_STRING];
             snprintf(i.name, MAX_STRING, "mc0:BARULAND/%s", en->d_name);
-            i.surface = load_surface(i.name); //***
-            drawings.push_back(i);
+            i.surface = load_surface(i.name);
+            if (i.surface) {
+              drawings.push_back(i);
+            } else {
+              dbglogger_printf("*** Failed Load %s\n", i.name);
+              delete[] i.name;
+            }
           } else {
             dbglogger_printf("NOK\n");
           }
@@ -560,15 +566,15 @@ int main(int argc, char **argv) {
       srcrect.h = BUTTONS_XY;
 
       dstrect.x = (((WIDTH / 4) - ((BUTTONS_XY) + t_move->w)) / 2);
-      dstrect.y = HEIGHT - (BUTTONS_XY * 2);
+      dstrect.y = HEIGHT - (BUTTONS_XY * 1.5);
       srcrect.x = L1_X * BUTTONS_XY;
       srcrect.y = L1_Y * BUTTONS_XY;
       SDL_BlitSurface(buttons, &srcrect, sfundo, &dstrect);
-      dstrect.y += BUTTONS_XY;
+      dstrect.y += (BUTTONS_XY / 2);
       srcrect.x = R1_X * BUTTONS_XY;
       srcrect.y = R1_Y * BUTTONS_XY;
       SDL_BlitSurface(buttons, &srcrect, sfundo, &dstrect);
-      dstrect.x += BUTTONS_XY;
+      dstrect.x += (BUTTONS_XY * 1.1);
       SDL_BlitSurface(t_move, NULL, sfundo, &dstrect);
       dstrect.x += t_move->w;
 
@@ -735,6 +741,17 @@ int main(int argc, char **argv) {
       // show
       SDL_Flip(screen);
 
+#ifdef PRE_CACHE
+      // create cache
+      if (!caching) {
+        for (list<draws>::reverse_iterator cache_ptr = drawings.rbegin();
+             cache_ptr != drawings.rend(); ++cache_ptr) {
+          cache_scale(cache_ptr->surface);
+        }
+        caching = true;
+      }
+#endif
+
     } break;
 
     case GALLERY_END: {
@@ -752,6 +769,8 @@ int main(int argc, char **argv) {
           delete[] i.name;
         drawings.pop_front();
       }
+
+      scale_free();
 
       if (draw_continue) {
         // exit to game

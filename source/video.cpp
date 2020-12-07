@@ -14,7 +14,8 @@ SDL_Surface *load_surface(const char *filename) {
   }
   tmp = IMG_Load_RW(io, 0);
   if (tmp == NULL) {
-    dbglogger_printf("IMG_Load: %s", SDL_GetError());
+    dbglogger_printf("IMG_Load: %s\n", SDL_GetError());
+    SDL_RWclose(io);
     return NULL;
   }
 
@@ -38,7 +39,7 @@ void fade_in_out(SDL_Surface *screen, SDL_Surface *image, bool in_out) {
   SDL_Surface *tmp = SDL_CreateRGBSurface(SDL_SWSURFACE, screen->w, screen->h,
                                           32, rmask, gmask, bmask, amask);
   if (tmp == NULL) {
-    dbglogger_printf("SDL_CreateRGBSurface: %s", SDL_GetError());
+    dbglogger_printf("SDL_CreateRGBSurface: %s\n", SDL_GetError());
     return;
   }
   // Convert it to the format of the screen
@@ -64,7 +65,7 @@ void fade_in_out(SDL_Surface *screen, SDL_Surface *image, bool in_out) {
         SDL_CreateRGBSurface(SDL_SWSURFACE, screen->w, screen->h / PARTS_EFFECT,
                              32, rmask, gmask, bmask, amask);
     if (tmp == NULL) {
-      dbglogger_printf("SDL_CreateRGBSurface: %s", SDL_GetError());
+      dbglogger_printf("SDL_CreateRGBSurface: %s\n", SDL_GetError());
       return;
     }
     // Convert it to the format of the screen
