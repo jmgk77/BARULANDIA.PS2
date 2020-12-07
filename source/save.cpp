@@ -8,9 +8,8 @@ int do_save_png(void *d) {
   time(&rawtime);
   t = gmtime(&rawtime);
 
-  snprintf(buf, MAX_STRING, "%sSAVEDATA/DRAW_%d_%02d_%02d_%02d_%02d_%02d%s",
-           DATA_PATH, t->tm_year + 1900, t->tm_mon + 1, t->tm_mday, t->tm_hour,
-           t->tm_min, t->tm_sec, GRAPH_EXT);
+  snprintf(buf, MAX_STRING, "mc0:BARULAND/%02d%02d%02d%02d.PNG", t->tm_mday,
+           t->tm_hour, t->tm_min, t->tm_sec);
   dbglogger_printf("THREAD SAVING: %s\n", buf);
 
   SDL_Rect content;

@@ -42,9 +42,9 @@ using namespace std;
 #include <SDL/SDL.h>
 #include <SDL/SDL_events.h>
 #include <SDL/SDL_image.h>
+#include <SDL/SDL_mixer.h>
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_ttf.h>
-#include <SDL/SDL_mixer.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -53,14 +53,18 @@ using namespace std;
 #include <cmath>
 #include <cstring>
 #include <dirent.h>
+#include <fcntl.h>
 #include <list>
 #include <png.h>
 #include <queue>
 #include <romfs.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 #include <time.h>
 
 #include "debug.h"
 #include "floodfill.h"
+#include "memcard.h"
 #include "romfs.h"
 #include "romfs_help.h"
 #include "save.h"
@@ -72,15 +76,33 @@ using namespace std;
 
 #ifdef PS2
 #include <debug.h>
+#include <dirent.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <hdd-ioctl.h>
 #include <iopcontrol.h>
 #include <iopheap.h>
 #include <kernel.h>
+#include <libcdvd.h>
 #include <libmc.h>
+#include <libpad.h>
+#include <libpwroff.h>
+#include <limits.h>
 #include <loadfile.h>
+#include <malloc.h>
+#include <math.h>
+#include <netman.h>
+#include <osd_config.h>
+#include <ps2ips.h>
+#include <ps2smb.h>
 #include <sbv_patches.h>
 #include <sifrpc.h>
+#include <smem.h>
+#include <smod.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <tamtypes.h>
+#include <unistd.h>
+#include <usbhdfsd-common.h>
 #endif

@@ -2,8 +2,17 @@
 
 SDL_Surface *load_surface(const char *filename) {
   SDL_Surface *tmp;
+  SDL_RWops *io;
   dbglogger_printf("LOADED: %s\n", filename);
-  tmp = IMG_Load_RW(f2rw((char *)filename), 0);
+  if ((filename[0] == 'm') && (filename[1] == 'c') && (filename[2] == '0') &&
+      (filename[3] == ':')) {
+    dbglogger_printf("(memcard) %s\n", filename);
+    io = SDL_RWFromFile((char *)filename, "rb");
+  } else {
+    dbglogger_printf("(internal) ");
+    io = f2rw((char *)filename);
+  }
+  tmp = IMG_Load_RW(io, 0);
   if (tmp == NULL) {
     dbglogger_printf("IMG_Load: %s", SDL_GetError());
     return NULL;
@@ -13,6 +22,7 @@ SDL_Surface *load_surface(const char *filename) {
   SDL_Surface *surface = SDL_DisplayFormatAlpha(tmp);
   // Free the original bitmap
   SDL_FreeSurface(tmp);
+  SDL_RWclose(io);
   return surface;
 }
 

@@ -7,11 +7,11 @@ EE_OBJS += build/assets.o
 
 EE_INCS     = -I$(PS2SDK)/ports/include -I./include -I$(PS2SDK)/ports/include/stlport
 EE_LDFLAGS  = -L$(PS2SDK)/ports/lib -L$(PS2DEV)/gsKit/lib
-EE_LIBS     = -lSDL_image -lsdlmixer -lsdl -lz -lSDL_ttf -lstdc++ -lm -lpng -lmikmod \
-			  -ljpeg -ltiff -lfreetype -lSDL_gfx
+EE_LIBS     = -lSDL_image -lsdlmixer -lsdl -lSDL_ttf -lstdc++ -lm -lpng -lmikmod \
+			  -ljpeg -ltiff -lfreetype -lSDL_gfx -lmc
 
 EE_CXXFLAGS += -DPS2 -w -O3
-#EE_CXXFLAGS += -DDEBUG
+EE_CXXFLAGS += -DDEBUG
 
 all: $(EE_BIN)
 

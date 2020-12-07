@@ -53,10 +53,10 @@ int main(int argc, char **argv) {
   SifLoadFileInit();
   SifInitIopHeap();
   sbv_patch_enable_lmb();
-#endif
 
   // change priority to make SDL audio thread run properly
   ChangeThreadPriority(GetThreadId(), 72);
+#endif
 
   /////////////////////////////////////////////////////////////////////////////
   /////////////////////////////////////////////////////////////////////////////
@@ -88,6 +88,11 @@ int main(int argc, char **argv) {
 
   // romfs
   romdisk_mount(&assets);
+
+  // memcard
+#ifdef PS2
+  memcard_init();
+#endif
 
   if (TTF_Init() == -1) {
     dbglogger_printf("TTF_Init: %s\n", TTF_GetError());
@@ -514,15 +519,20 @@ int main(int argc, char **argv) {
       sfundo = load_surface(DATA_PATH "FUNDO" GRAPH_EXT);
 
       // create surfaces and textures
-      if (DIR *dr = opendir(DATA_PATH "SAVEDATA/")) {
+      if (DIR *dr = opendir("mc0:BARULAND")) {
         while ((en = readdir(dr)) != NULL) {
-          // our files have exatly 28 chars (DRAW_YYYY_MM_DD_HH_MM_SS.PNG)
-          if (strlen(en->d_name) == 28) {
+          dbglogger_printf("MEMCARD %s ", en->d_name);
+          // our files have exatly 12 chars (DDHHMMSS.PNG) and end in 'PNG'
+          if ((strlen(en->d_name) == 12) && (en->d_name[8] == '.') &&
+              (en->d_name[9] <= 'P') && (en->d_name[10] == 'N') &&
+              (en->d_name[11] == 'G')) {
+            dbglogger_printf("OK\n");
             i.name = new char[MAX_STRING];
-            snprintf(i.name, MAX_STRING, "%sSAVEDATA/%s", DATA_PATH,
-                     en->d_name);
-            i.surface = load_surface(i.name);
+            snprintf(i.name, MAX_STRING, "mc0:BARULAND/%s", en->d_name);
+            i.surface = load_surface(i.name); //***
             drawings.push_back(i);
+          } else {
+            dbglogger_printf("NOK\n");
           }
         }
         closedir(dr);
@@ -550,9 +560,13 @@ int main(int argc, char **argv) {
       srcrect.h = BUTTONS_XY;
 
       dstrect.x = (((WIDTH / 4) - ((BUTTONS_XY) + t_move->w)) / 2);
-      dstrect.y = HEIGHT - BUTTONS_XY;
-      srcrect.x = DPAD_X * BUTTONS_XY;
-      srcrect.y = DPAD_Y * BUTTONS_XY;
+      dstrect.y = HEIGHT - (BUTTONS_XY * 2);
+      srcrect.x = L1_X * BUTTONS_XY;
+      srcrect.y = L1_Y * BUTTONS_XY;
+      SDL_BlitSurface(buttons, &srcrect, sfundo, &dstrect);
+      dstrect.y += BUTTONS_XY;
+      srcrect.x = R1_X * BUTTONS_XY;
+      srcrect.y = R1_Y * BUTTONS_XY;
       SDL_BlitSurface(buttons, &srcrect, sfundo, &dstrect);
       dstrect.x += BUTTONS_XY;
       SDL_BlitSurface(t_move, NULL, sfundo, &dstrect);
@@ -601,14 +615,14 @@ int main(int argc, char **argv) {
     case GALLERY_MAIN: {
 
       // move drawings
-      BUTTON_PRESSED(SDL_CONTROLLER_BUTTON_LEFT) {
+      BUTTON_PRESSED(SDL_CONTROLLER_BUTTON_L1) {
         if (drawing_ptr != drawings.begin()) {
           drawing_ptr--;
         } else {
           effect_play(SOUND_ERROR);
         }
       }
-      BUTTON_PRESSED(SDL_CONTROLLER_BUTTON_RIGHT) {
+      BUTTON_PRESSED(SDL_CONTROLLER_BUTTON_R1) {
         if (drawing_ptr != --drawings.end()) {
           drawing_ptr++;
         } else {
