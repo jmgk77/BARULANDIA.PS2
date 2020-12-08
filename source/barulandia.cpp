@@ -53,6 +53,7 @@ int main(int argc, char **argv) {
   SifLoadFileInit();
   SifInitIopHeap();
   sbv_patch_enable_lmb();
+  sbv_patch_fileio();
 
   // change priority to make SDL audio thread run properly
   ChangeThreadPriority(GetThreadId(), 72);
